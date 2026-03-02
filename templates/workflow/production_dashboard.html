@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Produção - CADFlow{% endblock %}
+
+{% block content %}
+<h3 class="mb-3">Dashboard Produção</h3>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="card shadow-sm"><div class="card-body">
+      <div class="text-muted">Pronto p/ iniciar</div>
+      <div class="display-6">{{ total_ready }}</div>
+    </div></div>
+  </div>
+  <div class="col-md-3">
+    <div class="card shadow-sm"><div class="card-body">
+      <div class="text-muted">Em execução</div>
+      <div class="display-6">{{ total_in_exec }}</div>
+    </div></div>
+  </div>
+  <div class="col-md-3">
+    <div class="card shadow-sm"><div class="card-body">
+      <div class="text-muted">Travadas</div>
+      <div class="display-6">{{ total_blocked }}</div>
+    </div></div>
+  </div>
+  <div class="col-md-3">
+    <div class="card shadow-sm"><div class="card-body">
+      <div class="text-muted">Finalizadas (30d)</div>
+      <div class="display-6">{{ finished_last_30d }}</div>
+    </div></div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-8">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <div class="card shadow-sm"><div class="card-body">
+          <h5 class="mb-2">Pronto p/ Produção</h5>
+          <ul class="list-group list-group-flush">
+            {% for r in ready %}
+              <li class="list-group-item">
+                <strong>{{ r.part.code }}</strong> rev {{ r.revision_no }}
+                <div class="text-muted small">{{ r.part.description }}</div>
+              </li>
+            {% empty %}
+              <li class="list-group-item text-muted">Nada na fila.</li>
+            {% endfor %}
+          </ul>
+        </div></div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card shadow-sm"><div class="card-body">
+          <h5 class="mb-2">Em execução</h5>
+          <ul class="list-group list-group-flush">
+            {% for r in in_exec %}
+              <li class="list-group-item">
+                <strong>{{ r.part.code }}</strong> rev {{ r.revision_no }}
+              </li>
+            {% empty %}
+              <li class="list-group-item text-muted">Nada em execução.</li>
+            {% endfor %}
+          </ul>
+        </div></div>
+      </div>
+
+      <div class="col-md-12">
+        <div class="card shadow-sm"><div class="card-body">
+          <h5 class="mb-2">Travadas</h5>
+          <ul class="list-group list-group-flush">
+            {% for r in blocked %}
+              <li class="list-group-item">
+                <strong>{{ r.part.code }}</strong> rev {{ r.revision_no }}
+              </li>
+            {% empty %}
+              <li class="list-group-item text-muted">Nada travado.</li>
+            {% endfor %}
+          </ul>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="mb-2">Principais motivos de travamento</h5>
+        <ol class="mb-0">
+          {% for reason, c in top_reasons %}
+            <li>{{ reason }} <span class="text-muted">({{ c }})</span></li>
+          {% empty %}
+            <div class="text-muted">Sem travas ativas.</div>
+          {% endfor %}
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

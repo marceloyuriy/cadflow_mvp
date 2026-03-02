@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Login - CADFlow{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h4 class="mb-3">Entrar no CADFlow</h4>
+        <form method="post">
+          {% csrf_token %}
+          {{ form.non_field_errors }}
+
+          <div class="mb-3">
+            <label class="form-label">Usuário</label>
+            {{ form.username }}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Senha</label>
+            {{ form.password }}
+          </div>
+
+          <button class="btn btn-primary w-100" type="submit">Entrar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

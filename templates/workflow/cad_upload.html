@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Upload - CADFlow{% endblock %}
+
+{% block content %}
+<h3 class="mb-3">Upload de arquivos</h3>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <div class="mb-2">
+      <strong>{{ rev.part.code }}</strong> — rev {{ rev.revision_no }}<br/>
+      <span class="text-muted">{{ rev.get_status_display }}</span>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label">Selecione arquivos (múltiplos)</label>
+        <input class="form-control" type="file" name="files" multiple />
+      </div>
+      <button class="btn btn-primary" type="submit">Enviar</button>
+      <a class="btn btn-link" href="{% url 'cad_dashboard' %}">Voltar</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

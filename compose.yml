@@ -13,9 +13,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-    # opcional (se quiser conectar via DBeaver/psql no host)
-    # ports:
-    #   - "5432:5432"
 
   web:
     build: .

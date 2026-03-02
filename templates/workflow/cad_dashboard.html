@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}CAD - CADFlow{% endblock %}
+
+{% block content %}
+<h3 class="mb-3">Dashboard CAD</h3>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="text-muted">Arquivos pendentes (ainda não puxados)</div>
+        <div class="display-6">{{ pending_files_count }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="text-muted">Revisões pendentes (pré-execução)</div>
+        <div class="display-6">{{ pending_revisions_count }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="text-muted">Por status (correntes)</div>
+        <div class="small">
+          Aguardando: {{ status_map.AGUARDANDO_VALIDACAO|default:0 }}<br/>
+          Revisão solicitada: {{ status_map.REVISAO_SOLICITADA|default:0 }}<br/>
+          Pronto p/ Produção: {{ status_map.PRONTO_PRODUCAO|default:0 }}<br/>
+          Em execução: {{ status_map.EM_EXECUCAO|default:0 }}<br/>
+          Travado: {{ status_map.TRAVADO|default:0 }}<br/>
+          Finalizada: {{ status_map.FINALIZADA|default:0 }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <h5 class="mb-3">Revisões correntes</h5>
+
+    <div class="table-responsive">
+      <table class="table table-sm align-middle">
+        <thead>
+          <tr>
+            <th>Peça</th>
+            <th>Rev</th>
+            <th>Status</th>
+            <th>Arquivos</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in revisions %}
+          <tr>
+            <td><strong>{{ r.part.code }}</strong><div class="text-muted small">{{ r.part.description }}</div></td>
+            <td>{{ r.revision_no }}</td>
+            <td>{{ r.get_status_display }}</td>
+            <td>{{ r.files.count }}</td>
+            <td class="text-end">
+              <a class="btn btn-outline-primary btn-sm" href="{% url 'cad_upload_files' r.id %}">Upload</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5" class="text-muted">Nenhuma revisão encontrada.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
