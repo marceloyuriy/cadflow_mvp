@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 
-from workflow.models import Part, PartRevision, RevisionFile, ManufacturingReview, BlockEvent, AuditEvent
+from cadflow_workflow.models import Part, PartRevision, RevisionFile, ManufacturingReview, BlockEvent, AuditEvent
 
 
 class Command(BaseCommand):
