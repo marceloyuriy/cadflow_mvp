@@ -6,7 +6,7 @@
 
 <div class="row g-3 mb-4">
   <div class="col-md-4">
-    <div class="card shadow-sm">
+    <div class="card shadow-sm h-100">
       <div class="card-body">
         <div class="text-muted">Arquivos pendentes (ainda não puxados)</div>
         <div class="display-6">{{ pending_files_count }}</div>
@@ -14,7 +14,7 @@
     </div>
   </div>
   <div class="col-md-4">
-    <div class="card shadow-sm">
+    <div class="card shadow-sm h-100">
       <div class="card-body">
         <div class="text-muted">Revisões pendentes (pré-execução)</div>
         <div class="display-6">{{ pending_revisions_count }}</div>
@@ -22,7 +22,7 @@
     </div>
   </div>
   <div class="col-md-4">
-    <div class="card shadow-sm">
+    <div class="card shadow-sm h-100">
       <div class="card-body">
         <div class="text-muted">Por status (correntes)</div>
         <div class="small">
@@ -38,10 +38,149 @@
   </div>
 </div>
 
+<div class="row g-3 mb-4">
+  <div class="col-lg-5">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h5 class="mb-3">Novo envio CAD</h5>
+        <form method="post" action="{% url 'cad_new_submission' %}" enctype="multipart/form-data" class="row g-2">
+          {% csrf_token %}
+          <div class="col-12">
+            <label class="form-label">Código da peça</label>
+            <input class="form-control" type="text" name="code" required placeholder="Ex: BRK-001" />
+          </div>
+          <div class="col-12">
+            <label class="form-label">Descrição</label>
+            <input class="form-control" type="text" name="description" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Material</label>
+            <input class="form-control" type="text" name="material" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Quantidade</label>
+            <input class="form-control" type="number" name="quantity" min="1" value="1" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Prazo</label>
+            <input class="form-control" type="date" name="need_by" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Nota da revisão</label>
+            <input class="form-control" type="text" name="revision_note" placeholder="Ex: Ajuste furo M6" />
+          </div>
+          <div class="col-12">
+            <label class="form-label">Observações</label>
+            <textarea class="form-control" name="notes" rows="2"></textarea>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Arquivos da revisão</label>
+            <input class="form-control" type="file" name="files" multiple required />
+          </div>
+          <div class="col-12">
+            <button class="btn btn-primary" type="submit">Registrar envio</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-7">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h5 class="mb-3">Revisões com feedback da Manufatura</h5>
+        <div class="table-responsive">
+          <table class="table table-sm align-middle">
+            <thead>
+              <tr>
+                <th>Peça</th>
+                <th>Limitações / motivo</th>
+                <th>Quando</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for review in requested_reviews %}
+              <tr>
+                <td><strong>{{ review.revision.part.code }}</strong> rev {{ review.revision.revision_no }}</td>
+                <td>{{ review.limitations_text|default:"Sem detalhe informado." }}</td>
+                <td>{{ review.decided_at|date:"d/m/Y H:i" }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="3" class="text-muted">Nenhuma revisão solicitada no momento.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-lg-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="mb-3">Itens em produção (visibilidade CAD)</h5>
+        <div class="table-responsive">
+          <table class="table table-sm align-middle">
+            <thead>
+              <tr>
+                <th>Peça</th>
+                <th>Rev</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in in_production %}
+              <tr>
+                <td><strong>{{ r.part.code }}</strong></td>
+                <td>{{ r.revision_no }}</td>
+                <td>{{ r.get_status_display }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="3" class="text-muted">Nenhum item em execução/travado/finalizado.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="mb-3">Fila Pronto p/ Produção</h5>
+        <div class="table-responsive">
+          <table class="table table-sm align-middle">
+            <thead>
+              <tr>
+                <th>Ordem</th>
+                <th>Peça</th>
+                <th>Rev</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in ready_for_production %}
+              <tr>
+                <td>{{ r.priority_rank }}</td>
+                <td><strong>{{ r.part.code }}</strong></td>
+                <td>{{ r.revision_no }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="3" class="text-muted">Fila vazia.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="card shadow-sm">
   <div class="card-body">
     <h5 class="mb-3">Revisões correntes</h5>
-
     <div class="table-responsive">
       <table class="table table-sm align-middle">
         <thead>
@@ -61,7 +200,7 @@
             <td>{{ r.get_status_display }}</td>
             <td>{{ r.files.count }}</td>
             <td class="text-end">
-              <a class="btn btn-outline-primary btn-sm" href="{% url 'cad_upload_files' r.id %}">Upload</a>
+              <a class="btn btn-outline-primary btn-sm" href="{% url 'cad_upload_files' r.id %}">Gerenciar arquivos</a>
             </td>
           </tr>
           {% empty %}
@@ -70,7 +209,6 @@
         </tbody>
       </table>
     </div>
-
   </div>
 </div>
 {% endblock %}

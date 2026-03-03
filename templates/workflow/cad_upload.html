@@ -4,7 +4,7 @@
 {% block content %}
 <h3 class="mb-3">Upload de arquivos</h3>
 
-<div class="card shadow-sm">
+<div class="card shadow-sm mb-3">
   <div class="card-body">
     <div class="mb-2">
       <strong>{{ rev.part.code }}</strong> — rev {{ rev.revision_no }}<br/>
@@ -20,6 +20,40 @@
       <button class="btn btn-primary" type="submit">Enviar</button>
       <a class="btn btn-link" href="{% url 'cad_dashboard' %}">Voltar</a>
     </form>
+  </div>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <h5 class="mb-3">Arquivos da revisão</h5>
+    <div class="table-responsive">
+      <table class="table table-sm align-middle">
+        <thead>
+          <tr>
+            <th>Arquivo</th>
+            <th>Tamanho (bytes)</th>
+            <th>SHA-256</th>
+            <th>Enviado em</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for f in files %}
+          <tr>
+            <td>{{ f.original_name }}</td>
+            <td>{{ f.size_bytes }}</td>
+            <td class="small"><code>{{ f.sha256 }}</code></td>
+            <td>{{ f.uploaded_at|date:"d/m/Y H:i" }}</td>
+            <td class="text-end">
+              <a class="btn btn-outline-secondary btn-sm" href="{% url 'cad_download_file' f.id %}">Download</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5" class="text-muted">Sem arquivos enviados para esta revisão.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 {% endblock %}
